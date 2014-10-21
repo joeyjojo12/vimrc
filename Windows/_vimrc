@@ -1,0 +1,90 @@
+set nocompatible
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let eq = ''
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      let cmd = '""' . $VIMRUNTIME . '\diff"'
+      let eq = '"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+endfunction
+
+set smartindent
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set nowrap
+
+syntax enable
+set background=dark
+colorscheme solarized
+
+set switchbuf=usetab
+nnoremap <F8> :sbnext<CR>
+nnoremap <S-F8> :sbprevious<CR>
+
+nnoremap <C-Left> :tabprevious<CR>
+nnoremap <C-S-Tab> :tabprevious<CR>
+nnoremap <C-Right> :tabnext<CR>
+nnoremap <C-Tab> :tabnext<CR>
+nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
+nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
+nnoremap <F2> :tabe<CR>
+nnoremap <F5> :buffers<CR>:buffer<Space>
+
+nnoremap <F3> "pye
+vnoremap <F3> "py
+nnoremap <F4> "pp
+vnoremap <F4> "pp
+
+nnoremap <S-Y> y$
+
+set number
+set ic
+set tw=0
+set clipboard=unnamed
+
+au GUIEnter * simalt ~x
+
+" Make and Load session
+
+" function! MakeSession()
+"   let b:sessiondir = $HOME . "\\.vim\\sessions"
+"   if (filewritable(b:sessiondir) != 2)
+"     exe 'silent !mkdir -p ' b:sessiondir
+"     redraw!
+"   endif
+"   let b:filename = b:sessiondir . '\\session.vim'
+"   exe "mksession! " . b:filename
+" endfunction
+" 
+" function! LoadSession()
+"   let b:sessiondir = $HOME . "\\.vim\\sessions"
+"   let b:sessionfile = b:sessiondir . "\\session.vim"
+"   if (filereadable(b:sessionfile))
+"     exe 'source ' b:sessionfile
+"   else
+"     echo "No session loaded." . b:sessionfile
+"   endif
+" endfunction
+" au VimEnter * nested :call LoadSession()
+" au VimLeave * :call MakeSession()
